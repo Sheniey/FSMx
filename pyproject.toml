@@ -1,0 +1,29 @@
+
+[project]
+name = "fsmx"
+version = "0.1.0"
+description = "A Sophisticated state machine implementation in Python. It's NOT just a FSM, it's a FSM, PDA, Statechart, Async|Sync and Hooks driven engine."
+requires-python = ">=3.14"
+license = { text = "MIT" }
+authors = [
+    {name = "Sheñey", email = "sheneyby2010@gmail.com"}
+]
+dependencies = []
+keywords = [
+    "fsm",
+    "pda",
+    "state machine",
+    "statechart",
+    "async",
+    "sync",
+    "hooks",
+    "event-driven",
+]
+
+[project.urls]
+Homepage = "https://github.com/sheniey/fsmx"
+Repository = "https://github.com/sheniey/fsmx"
+
+[build-system]
+requires = ["setuptools", "wheel"]
+build-backend = "setuptools.build_meta"
