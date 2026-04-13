@@ -4,6 +4,7 @@ dist/
 build/
 *.egg-info/
 *.egg
+README_PYPI.md
 
 # Bytecode files
 __pycache__/
