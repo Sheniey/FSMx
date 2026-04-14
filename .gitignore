@@ -13,3 +13,7 @@ __pycache__/
 
 # Sensitive files
 *.env
+
+# personal test file
+playground.py
+playground.test.py

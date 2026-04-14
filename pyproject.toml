@@ -3,7 +3,7 @@
 name = "fsmx"
 version = "0.1.0"
 description = "A Sophisticated state machine implementation in Python. It's NOT just a FSM, it's a FSM, PDA, Statechart, Async|Sync and Hooks driven engine."
-readme.file = "README_PYPI.md"
+readme = "README_PYPI.md"
 requires-python = ">=3.14"
 license.text = "MIT License"
 authors = [
@@ -29,13 +29,13 @@ classifiers = [
     "Topic :: Utilities",
     "Operating System :: OS Independent",
     "Typing :: Typed",
-    "Programming Language :: Python :: 3.14",
-    "Programming Language :: Python :: 3.15 alpha",
+    "Programming Language :: Python :: 3.14"
 ]
 
 [project.urls]
 Homepage = "https://github.com/sheniey/fsmx"
 Repository = "https://github.com/sheniey/fsmx"
+Issues = "https://github.com/sheniey/fsmx/issues"
 
 [build-system]
 requires = ["setuptools", "wheel"]
