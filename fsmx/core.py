@@ -29,11 +29,11 @@ class _Mapper[S: Enum, E: Enum, C]:
         formatted_transitions: list[dict[str, str]] = []
         for (state, event), (next_state, func, guard) in self.__transitions.items():
             formatted_transitions.append({
-                "from": state.name,
-                "event": event.name,
-                "to": next_state.name,
-                "action": f"{func.__name__}()",
-                "guard": f"{guard.__name__}()" if guard else "always_true()"
+                'from': state.name,
+                'event': event.name,
+                'to': next_state.name,
+                'action': f'{func.__name__}()',
+                'guard': f'{guard.__name__}()' if guard else 'always_true()'
             })
         console.print_json(data=formatted_transitions, indent=indent)
 
@@ -143,7 +143,7 @@ class StateMachine[S: Enum, E: Enum, C]:
             return f'{n} {singular}'
         return f"{n} {plural or singular + 's'}"
 
-    def map(self, *, render: RenderMethod = 'console') -> _Mapper[S, E, C]:
+    def visualize(self, *, render: RenderMethod = 'console') -> _Mapper[S, E, C]:
         return _Mapper(
             transitions = self.transitions,
             render      = render
@@ -282,6 +282,7 @@ f'''StateMachine(
             raise InvalidTransition(f'Cannot {event.name} when {state.name}.') from e
 
     def dump_transition(self,
+        *,
         from_state: S | None = None,
         event: E | None = None,
         to_state: S | None = None,
@@ -365,5 +366,5 @@ f'''StateMachine(
 
     # to be used in a long-running session
 
-    def session(self, ctx: C, initial_state: S) -> StateMachineSession[S, E, C]:
-        return StateMachineSession(self, ctx, initial_state)
+    def session(cls, ctx: C, initial_state: S) -> StateMachineSession[S, E, C]:
+        return StateMachineSession(cls, ctx, initial_state)
