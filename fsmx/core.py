@@ -1,7 +1,7 @@
 
 from dataclasses import dataclass, field
 from enum import Enum
-from typing import Any, Callable
+from typing import Any, Callable, Self
 from collections.abc import Iterable
 from collections import defaultdict
 import inspect
@@ -11,39 +11,26 @@ from .fsm_types import (
     Guard,
     TransitionMap, Transition, TransitionModel,
     Hook, HookMap,
-    RenderMethod
+    VisualizePart,
+    StateMachinePayload
 )
 from .exceptions import (
     InvalidTransition, InvalidState, InvalidEvent, InvalidTransitionFormat,
     TransitionBlocked, GuardRejected,
     TransitionRewriteAttempt
 )
-from .utils import console, always_true
+from .utils import always_true
+from .tools import console
 
-class _Mapper[S: Enum, E: Enum, C]:
-    def __init__(self, transitions: TransitionMap[S, E, C], render: RenderMethod) -> None:
-        self.__transitions: TransitionMap[S, E, C] = transitions
-        self.__render: RenderMethod = render
+class Reactive[E: Enum]:
+    def __rshift__(self, event: E) -> Self:
+        self.handle(event)
+        return self
 
-    def json(self, indent: int = 4) -> None:
-        formatted_transitions: list[dict[str, str]] = []
-        for (state, event), (next_state, func, guard) in self.__transitions.items():
-            formatted_transitions.append({
-                'from': state.name,
-                'event': event.name,
-                'to': next_state.name,
-                'action': f'{func.__name__}()',
-                'guard': f'{guard.__name__}()' if guard else 'always_true()'
-            })
-        console.print_json(data=formatted_transitions, indent=indent)
+    def handle(self, event: E, *args: Any, **kwargs: Any) -> ...:
+        raise NotImplementedError(f'Reactive[{E.__name__}] subclasses must implement .handle() method.')
 
-    def tree(self) -> None:
-        match self.__render:
-            case 'console':
-                for (state, event), (next_state, _, guard) in self.__transitions.items():
-                    console.print(f'   [purple]<[/purple][green]{state.name}[/green][purple]> ==[/purple][yellow]{event.name}[/yellow][purple]==> <[/purple][green]{next_state.name}[/green][purple]> : [/purple][cyan]{guard.__name__ if guard else "always_true"}[/cyan]()')
-
-class StateMachineSession[S: Enum, E: Enum, C]:
+class StateMachineInstance[S: Enum, E: Enum, C](Reactive[E]):
     def __init__(self, sm: StateMachine[S, E, C], ctx: C, initial_state: S) -> None:
         self.__sm: StateMachine[S, E, C] = sm
         self.__ctx: C = ctx
@@ -69,14 +56,14 @@ f'''StateMachineSession(
     def __eq__(self, other: object) -> bool:
         if isinstance(other, S):
             return self.__state == other
-        if isinstance(other, StateMachineSession):
+        if isinstance(other, StateMachineInstance):
             return self.__state == other.current_state 
         raise NotImplemented
     
     def __ne__(self, other: object) -> bool:
         if isinstance(other, S):
             return self.__state != other
-        if isinstance(other, StateMachineSession):
+        if isinstance(other, StateMachineInstance):
             return self.__state != other.current_state
         raise NotImplemented
 
@@ -91,15 +78,6 @@ f'''StateMachineSession(
         self.__state = await self.__sm.dispatch_async(self.__ctx, self.__state, event)
         self.__last_event = event
         return self.__state
-
-    def __rshift__(self, event: E) -> StateMachineSession[S, E, C]:
-        self.handle(event)
-        return self
-    
-    def __rlshift__(self, event: E) -> StateMachineSession[S, E, C]:
-        self.handle(event)
-        return self
-    
 
     # aux functions
 
@@ -136,6 +114,8 @@ class StateMachine[S: Enum, E: Enum, C]:
     before_hooks: list[Hook[C]] = field(default_factory=list)
     after_hooks: list[Hook[C]] = field(default_factory=list)
 
+    def export(self) -> None: ...
+
     # visualization
 
     def _use_plural(self, n: int, singular: str, plural: str | None = None, /) -> str:
@@ -143,11 +123,7 @@ class StateMachine[S: Enum, E: Enum, C]:
             return f'{n} {singular}'
         return f"{n} {plural or singular + 's'}"
 
-    def visualize(self, *, render: RenderMethod = 'console') -> _Mapper[S, E, C]:
-        return _Mapper(
-            transitions = self.transitions,
-            render      = render
-        )
+    def visualize(self, include: list[VisualizePart] = ['transitions']) -> None: ...
 
     def __str__(self) -> str:
         total_hooks: int = \
@@ -366,5 +342,5 @@ f'''StateMachine(
 
     # to be used in a long-running session
 
-    def session(cls, ctx: C, initial_state: S) -> StateMachineSession[S, E, C]:
-        return StateMachineSession(cls, ctx, initial_state)
+    def session(cls, ctx: C, initial_state: S) -> StateMachineInstance[S, E, C]:
+        return StateMachineInstance(cls, ctx, initial_state)

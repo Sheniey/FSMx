@@ -1,2 +1,9 @@
 
-from .core import StateMachine
+from .core import (
+    StateMachine,
+    Reactive
+)
+from .exceptions import (
+    GuardRejected,
+    InvalidTransition,
+)
