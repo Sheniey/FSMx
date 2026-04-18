@@ -1,13 +1,13 @@
 
 [project]
 name = "fsmx"
-version = "0.1.1"
+version = "0.2.0"
 description = "A Sophisticated state machine implementation in Python. It's NOT just a FSM, it's a FSM, PDA, Statechart, Async|Sync and Hooks driven engine."
 readme = "README.md"
 requires-python = ">=3.14"
 license.text = "MIT License"
 authors = [
-    {name = "Sheñey", email = "sheneyby2010@gmail.com"}
+    { name = "Sheñey", email = "sheneyby2010@gmail.com" }
 ]
 dependencies = [
     "rich",
