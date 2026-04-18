@@ -1,7 +1,7 @@
 
 [project]
 name = "fsmx"
-version = "0.2.0"
+version = "0.2.1"
 description = "A Sophisticated state machine implementation in Python. It's NOT just a FSM, it's a FSM, PDA, Statechart, Async|Sync and Hooks driven engine."
 readme = "README.md"
 requires-python = ">=3.14"
