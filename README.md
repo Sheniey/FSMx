@@ -1,21 +1,49 @@
+<a name="readme-top"></a>
 
 <h1 align="center">Finite State Machine eXtended (FSMX)</h1>
 
-[![PyPI version][fsmx.version.badge]][fsmx.project] 
+<div align="center">
 
-[fsmx.project]: https://pypi.org/project/fsmx/
-[fsmx.version.badge]: https://badge.fury.io/py/fsmx.svg
+![Contributors][contributors.shield]
+![Forks][forks.shield]
+![Stargazers][stars.shield]
+![Issues][issues.shield]
+
+![PyPI - Version][fsmx.shield]
+![GitHub License][license.shield]
+
+</div>
+
+[contributors.shield]: https://img.shields.io/github/contributors/sheniey/fsmx.svg?style=for-the-badge&logo=github&logoColor=eaeaea&label=Contributors&link=https%3A%2F%2Fgithub.com%2Fsheniey%2Ffsmx%2Fgraphs%2Fcontributors
+[forks.shield]: https://img.shields.io/github/forks/sheniey/fsmx?style=for-the-badge&logo=github&logoColor=eaeaea&label=Forks&link=https%3A%2F%2Fgithub.com%2Fsheniey%2Ffsmx%2Fnetwork%2Fmembers
+[stars.shield]: https://img.shields.io/github/stars/sheniey/fsmx?style=for-the-badge&logo=github&logoColor=eaeaea&label=Stars&link=https%3A%2F%2Fgithub.com%2Fsheniey%2Ffsmx%2Fstargazers
+[issues.shield]: https://img.shields.io/github/issues/sheniey/fsmx?style=for-the-badge&logo=github&logoColor=eaeaea&label=Issues&link=https%3A%2F%2Fgithub.com%2Fsheniey%2Ffsmx%2Fissues
+[fsmx.shield]: https://img.shields.io/pypi/v/fsmx?pypiBaseUrl=https%3A%2F%2Fpypi.org&logo=Python&logoColor=eaeaea&label=PyPi%20-%20Version&link=https%3A%2F%2Fpypi.org%2Fproject%2Ffsmx%2F
+[license.shield]: https://img.shields.io/github/license/sheniey/fsmx?style=flat&logo=wikiversity&logoColor=eaeaea&label=License&link=https%3A%2F%2Fchoosealicense.com%2Flicenses%2Fmit%2F
+
+<a name="content-table"></a>
+
+<br>
+<br>
+<br>
 
 ---
 
 ## Table of Contents
 
-- [Description](#what-is-it)
-- [Features](#features)
-- [Installation](#how-to-start)
-- [Dependencies](#dependencies)
-- [Samples](#samples)
-- [License](#license)
+- <a href="#description" title="Description">Description</a>
+- <a href="#features" title="Features">Features</a>
+- <a href="#installation" title="Installation">Installation</a>
+- <a href="#dependencies" title="Dependencies">Dependencies</a>
+- <a href="#samples" title="Samples">Samples</a>
+- <a href="#faqs" title="Frequently Asked Questions">FAQs</a>
+- <a href="#license" title="License">License</a>
+
+<a name="description"></a>
+
+<p align="right">
+    (<a href="#readme-top">Go Back</a>)
+</p>
 
 ---
 
@@ -25,6 +53,12 @@
 <strong>FSMx</strong> is a Python library for building finite state machines with a focus on flexibility, extensibility, and ease of use. FSMX provides a simple and intuitive API for defining states, transitions, and actions, while also supporting advanced features like custom contexts, hooks, and visualization.
 <p>
 
+<a name="features"></a>
+
+<p align="right">
+    (<a href="#readme-top">Go Back</a>)
+</p>
+
 ---
 
 ## Features
@@ -32,21 +66,28 @@
 - [x] Async/Sync support.
 - [x] Custom context support.
 - [x] Event driven.
-- [x] Flowchart visualization w/Graphviz.
+- [ ] Flowchart visualization w/Graphviz.
 - [x] FSM Private sessions API.
 - [ ] Full documentation.
 - [x] Hooks support.
 - [ ] Multiple export formats.
-- [x] Multiple visualization styles.
+- [ ] Multiple visualization styles.
 - [ ] < Python 3.14 support.
 - [x] Scalable.
 - [x] Type hints.
 
+<a name="installation"></a>
+
+<p align="right">
+    (<a href="#readme-top">Go Back</a>)
+</p>
+
 ---
 
-## How to start?
+## Installation
 
-> Makes sure you have `Python 3.14` or higher installed.
+> [!IMPORTANT]
+> Makes sure you have `Python 3.14` or higher installed; otherwise, you will not be able to use this library.
 
 ```bash
 # PyPi
@@ -54,6 +95,12 @@ pip install fsmx
 ```
 
 [( See quickstart >> )](#samples)
+
+<a name="dependencies"></a>
+
+<p align="right">
+    (<a href="#readme-top">Go Back</a>)
+</p>
 
 ---
 
@@ -65,6 +112,12 @@ pip install fsmx
 [rich.project]: https://pypi.org/project/rich/
 [graphviz.project]: https://pypi.org/project/graphviz/
 
+<a name="samples"></a>
+
+<p align="right">
+    (<a href="#readme-top">Go Back</a>)
+</p>
+
 ---
 
 ## Samples
@@ -73,7 +126,171 @@ pip install fsmx
 <summary>Quick Start</summary>
 
 ```python
-print("Hello, World!")
+from enum import Enum, auto
+from dataclasses import dataclass, field
+from fsmx import StateMachine, GuardRejected # <-- This Library
+import random
+
+GREEN = "\033[32m"
+RED = "\033[31m"
+CYAN = "\033[36m"
+RESET = "\033[0m"
+
+class PokemonState(Enum):
+    IDLE = auto()
+    SLEEPING = auto()
+    EATING = auto()
+    PLAYING = auto()
+    TRAINING = auto()
+
+class PokemonEvent(Enum):
+    REST = auto()
+    WAKE_UP = auto()
+    GO_TO_SLEEP = auto()
+    EAT = auto()
+    PLAY = auto()
+    TRAIN = auto()
+
+@dataclass
+class PokemonContext:
+    name: str
+    
+    energy: int
+    happiness: int
+    strength: int
+
+    log: list[str] = field(default_factory=list)
+
+poke_sm: StateMachine[PokemonState, PokemonEvent, PokemonContext] = StateMachine()
+
+@poke_sm.transition(PokemonState.SLEEPING, PokemonEvent.WAKE_UP, PokemonState.IDLE)
+def wake_up(ctx: PokemonContext) -> None:
+    energy_increase = random.randint(30, 45)
+    ctx.energy = min(100, ctx.energy + energy_increase)
+    ctx.log.append(
+        f"{ctx.name} woke up!\n"
+        f"{GREEN}  ↑ +{energy_increase}% Energy {RESET}"
+    )
+
+@poke_sm.transition(PokemonState.IDLE, PokemonEvent.GO_TO_SLEEP, PokemonState.SLEEPING)
+def go_to_sleep(ctx: PokemonContext) -> None:
+    ctx.log.append(
+        f"{ctx.name} went to sleep!\n"
+        f"{CYAN}  zZz... {RESET}"
+    )
+
+@poke_sm.transition(PokemonState.IDLE, PokemonEvent.EAT, PokemonState.EATING)
+def eat(ctx: PokemonContext) -> None:
+    energy_increase = random.randint(10, 30)
+    happiness_increase = random.randint(0, 10)
+
+    ctx.energy = min(100, ctx.energy + energy_increase)
+    ctx.happiness = min(100, ctx.happiness + happiness_increase)
+
+    ctx.log.append(
+        f"{ctx.name} is eating!\n"
+        f"{GREEN}  ↑ +{energy_increase}% Energy {RESET}\n"
+        f"{GREEN}  ↑ +{happiness_increase}% Happiness {RESET}"
+    )
+
+@poke_sm.transition(
+    from_state=PokemonState.IDLE,
+    event=PokemonEvent.PLAY,
+    to_state=PokemonState.PLAYING,
+    guard=lambda ctx: ctx.energy >= 15
+)
+def play(ctx: PokemonContext) -> None:
+    happiness_increase = random.randint(15, 25)
+    energy_decrease = random.randint(10, 15)
+
+    ctx.happiness = min(100, ctx.happiness + happiness_increase)
+    ctx.energy = max(0, ctx.energy - energy_decrease)
+
+    ctx.log.append(
+        f"{ctx.name} is playing!\n"
+        f"{GREEN}  ↑ +{happiness_increase}% Happiness {RESET}\n"
+        f"{RED}  ↓ -{energy_decrease}% Energy {RESET}"
+    )
+
+@poke_sm.transition(
+    from_state=PokemonState.IDLE,
+    event=PokemonEvent.TRAIN,
+    to_state=PokemonState.TRAINING,
+    guard=lambda ctx: ctx.energy >= 35 and ctx.happiness >= 10
+)
+def train(ctx: PokemonContext) -> None:
+    strength_increase = random.randint(15, 30)
+    energy_decrease = random.randint(25, 35)
+    happiness_decrease = random.randint(2, 10)
+
+    ctx.strength += strength_increase
+    ctx.energy = max(0, ctx.energy - energy_decrease)
+    ctx.happiness = max(0, ctx.happiness - happiness_decrease)
+
+    ctx.log.append(
+        f"{ctx.name} is training!\n"
+        f"{GREEN}  ↑ +{strength_increase} Strength {RESET}\n"
+        f"{RED}  ↓ -{energy_decrease}% Energy {RESET}\n"
+        f"{RED}  ↓ -{happiness_decrease}% Happiness {RESET}"
+    )
+
+@poke_sm.transition(
+    from_state=(PokemonState.EATING, PokemonState.PLAYING, PokemonState.TRAINING),
+    event=PokemonEvent.REST,
+    to_state=PokemonState.IDLE
+)
+def rest(ctx: PokemonContext) -> None:
+    energy_increase = random.randint(0, 5)
+    ctx.energy = min(100, ctx.energy + energy_increase)
+    ctx.log.append(
+        f"{ctx.name} is resting!\n"
+        f"{GREEN}  ↑ +{energy_increase}% Energy {RESET}"
+        if energy_increase > 0 else
+        f"{ctx.name} is resting!\n"
+        f"{CYAN}  No energy recovered. {RESET}"
+    )
+
+def main() -> None:
+    pikachu_ctx = PokemonContext(name="Pikachu", energy=60, happiness=70, strength=40) # balanced stats, a bit more energetic and happy than strong
+    scorbunny_ctx = PokemonContext(name="Scorbunny", energy=100, happiness=90, strength=20) # energetic and happy, but not very strong
+    snorlax_ctx = PokemonContext(name="Snorlax", energy=20, happiness=50, strength=120) # overweight and sleepy, but strong!
+
+    pokemon = poke_sm.session(random.choice([
+        pikachu_ctx,
+        scorbunny_ctx,
+        snorlax_ctx
+    ]), PokemonState.IDLE)
+
+    try:
+        pokemon \
+            >> PokemonEvent.PLAY  >> PokemonEvent.REST \
+            >> PokemonEvent.TRAIN >> PokemonEvent.REST \
+            >> PokemonEvent.EAT   >> PokemonEvent.REST \
+            >> PokemonEvent.TRAIN >> PokemonEvent.REST
+        pokemon \
+            >> PokemonEvent.GO_TO_SLEEP \
+            >> PokemonEvent.WAKE_UP
+    except GuardRejected as e:
+        # This may happen when TRAIN is blocked by guard conditions.
+        # ---------------------------------------------
+        # Remove random.choice() and use:
+        # SNORLAX to trigger it more often,
+        # SCORBUNNY to almost never see it,
+        # and PIKACHU for the most balanced behavior.
+        pokemon.context.log.append(f"Oh no! {pokemon.context.name} couldn't perform the action: {e}")
+
+    print(f"\n{pokemon.context.name}'s Activity Log:")
+    for log_entry in pokemon.context.log:
+        print(log_entry)
+
+    print(f"\n{pokemon.context.name}'s Final Stats:")
+    print(f"  - State: {pokemon.current_state.name}")
+    print(f"  - Energy: {pokemon.context.energy}%")
+    print(f"  - Happiness: {pokemon.context.happiness}%")
+    print(f"  - Strength: {pokemon.context.strength}\n")
+
+if __name__ == "__main__":
+    main()
 ```
 
 </details>
@@ -87,14 +304,10 @@ print("Hello, World!")
 from typing import Literal
 from dataclasses import dataclass, field
 from enum import Enum, auto
+from fsmx import StateMachine, InvalidTransition, Reactive # <-- This Library
 from rich.console import Console
 from rich.syntax import Syntax
 import datetime as dt
-
-from fsmx import StateMachine
-from fsmx.fsm_types import TransitionModel
-from fsmx.core import StateMachineSession
-from fsmx.exceptions import InvalidTransition
 
 console: Console = Console()
 ROSE_COLOR = "#ff80bf"
@@ -269,6 +482,49 @@ if __name__ == "__main__":
 
 </details>
 
+<a name="faqs"></a>
+
+<p align="right">
+    (<a href="#readme-top">Go Back</a>)
+</p>
+
+---
+
+## Why I cannot use this library in Python 3.13 or lower?
+
+You cannot use this library because it uses some of the new features and syntax introduced in Python 3.14, such as the `Self` type hint, which is not available in earlier versions. If you try to run this library in Python 3.13 or lower, you will encounter syntax errors or import errors due to the missing features.
+
+<div align="center"> === <strong>Python 3.13</strong> === </div>
+
+```python
+from typing import Self
+
+class MyClass:
+    def my_method(self) -> Self:
+        return self
+
+    def another_method(self) -> "MyClass":
+        return self
+```
+
+<br>
+
+<div align="center"> === <strong>Python 3.14</strong> === </div>
+
+```python
+class MyClass:
+    def my_method(self) -> MyClass:
+        return self
+```
+
+Also you can use the `from __future__ import annotations` statement to enable postponed evaluation of type annotations, which allows you to use the `Self` type hint in Python 3.13 or lower. However, this is not recommended as it may cause compatibility issues and is not a long-term solution.
+
+<a name="license"></a>
+
+<p align="right">
+    (<a href="#readme-top">Go Back</a>)
+</p>
+
 ---
 
 ## License
@@ -303,5 +559,9 @@ This project is licensed under the [MIT][mit.url] License.
 
 
 [mit.url]: https://opensource.org/licenses/MIT
+
+<p align="right">
+    (<a href="#readme-top">Go Back</a>)
+</p>
 
 ---
