@@ -494,6 +494,8 @@ if __name__ == "__main__":
 
 You cannot use this library because it uses some of the new features and syntax introduced in Python 3.14, such as the `Self` type hint, which is not available in earlier versions. If you try to run this library in Python 3.13 or lower, you will encounter syntax errors or import errors due to the missing features.
 
+<br>
+
 <div align="center"> === <strong>Python 3.13</strong> === </div>
 
 ```python
@@ -529,7 +531,7 @@ Also you can use the `from __future__ import annotations` statement to enable po
 
 ## License
 
-This project is licensed under the [MIT][mit.url] License.
+This project is licensed under the [*Massachusetts Institute of Technology* (MIT)][mit.url] License.
 
 <table style="padding-left: 2rem; padding-right: 2rem; margin-left: auto; margin-right: auto;">
 
